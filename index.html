@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>ShopNow</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="author" content="Abhishek Kumar">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+        <link href="https://fonts.googleapis.com/css?family=Arizonia" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="css/styles.css">
+        <script type="text/javascript" src="js/main.js"></script>
+    </head>
+    <body>
+        <header class="header-div">
+            <div class="title">
+                <h2>TODO</h2>
+                <p>A way to track your work list.</p>
+            </div>
+        </header>
+
+        <section class="section-add">
+            <div>
+                <input type="text" placeholder="Add your item" onkeydown="addChild(this)">
+            </div>
+        </section>
+
+        <div id="section-todo-list">
+            <!-- <div class="item-list md-checkbox">
+                <div> <input type="checkbox" id="checkbox1"><label for="checkbox1">Add new item</label></div> 
+                <div class="item-move"> <i class="fa fa-bars"></i></div>
+            </div> -->
+        </div>
+    </body>
+
+    <script>
+
+        let idCount = 0;
+        const todoSection = document.getElementById('section-todo-list');
+        function addChild(key) {            
+            if(event.key == 'Enter') {
+                
+
+                //creating new root div
+                let newDiv = document.createElement('div');
+                newDiv.setAttribute("class", "item-list md-checkbox");
+                newDiv.setAttribute("id", `row${++idCount}`)
+
+                // //creating new div for input and label
+                // let innerDiv1 = document.createElement('div');
+                // let input = document.createElement('input');
+                // input.setAttribute('type', 'checkbox');
+                // input.setAttribute('id', `todoItem${idCount++}`);
+
+                // let label = document.createElement('label');
+                // label.setAttribute('for', `todoItem${idCount}`);
+                // label.innerHTML = key.value;
+
+                // input.appendChild(label);
+
+                // innerDiv1.appendChild(input);
+
+                newDiv.innerHTML = `
+                    <div id="div${idCount}"> <input type="checkbox" id="checkbox${idCount}" onclick="changeState('div${idCount}')"><label for="checkbox${idCount}">${key.value}</label></div> 
+                    <div class="item-move" onclick="removeTask('row${idCount}')"> <i class="icon-close">&times;</i></div> 
+                `;
+
+                todoSection.appendChild(newDiv);
+                // todoSection.addChild= key.value;
+                // console.log(innerDiv1);
+                // console.log(input);
+            }
+        }
+
+        function changeState(divId) {
+            
+            const div = document.getElementById(`${divId}`);            
+            const checkedStatus = div.getElementsByTagName('input')[0].checked;
+
+            if(checkedStatus)
+                div.getElementsByTagName('label')[0].style.textDecoration = 'line-through';
+            else
+                div.getElementsByTagName('label')[0].style.textDecoration = 'none';
+        }
+
+        function removeTask(divId) {
+            document.getElementById(divId).remove();
+            // console.log(divId)
+            // todoSection.removeChild(todoSection.childNodes[0])
+        }
+
+    </script>
+</html>
