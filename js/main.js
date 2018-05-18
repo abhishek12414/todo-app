@@ -176,4 +176,21 @@ function updateCheckMark() {
         document.getElementById(checkboxID).checked = true;  
     }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
 
+    console.log(JSON.stringify(completedTask));
+    // localStorage.setItem('items', JSON.stringify(completedTask));
+    // const data = JSON.parse(localStorage.getItem('items'));
+}
+
+function createJson(){
+    console.log(todoSection);
+    
+    var taskArray = {};
+
+$("input[class=email]").each(function() {
+  var id = $(this).attr("title");
+  var email = $(this).val();
+
+  //how to create JSON?
+
+});
 }
