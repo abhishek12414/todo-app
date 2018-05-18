@@ -27,7 +27,7 @@
             
         </section>
 
-        <section id="taskStatus">
+        <section id="section-taskStatus">
             <div>
                 <p id="taskStatus"></p>
             </div>
@@ -39,9 +39,10 @@
     <script>
 
         let idCount = 0;
-        let completedTask = 0;
+        let completedTask = new Array();
 
         const todoSection = document.getElementById('section-todo-list');
+        
         function addChild(key) {            
             if(event.key == 'Enter') {
                 
@@ -51,11 +52,11 @@
                 newDiv.setAttribute("id", `row${++idCount}`);
 
                 newDiv.innerHTML = `
-                    <div id="div${idCount}"> <input type="checkbox" id="checkbox${idCount}" onclick="changeState('div${idCount}')"><label for="checkbox${idCount}">${key.value}</label></div> 
+                    <div> <input type="checkbox" id="checkbox${idCount}" onclick="changeState('row${idCount}')"><label for="checkbox${idCount}">${key.value}</label></div> 
                     <div class="item-move" onclick="removeTask('row${idCount}')"> <i class="icon-close">&times;</i></div> 
                 `;
 
-                todoSection.appendChild(newDiv);
+                todoSection.appendChild(newDiv);                
                 updateTaskStatus();
             }
         }
@@ -67,26 +68,41 @@
 
             if(checkedStatus) {
                 div.getElementsByTagName('label')[0].style.textDecoration = 'line-through';
-                ++completedTask;
             } else {
                 div.getElementsByTagName('label')[0].style.textDecoration = 'none';
-                --completedTask;
-
             }
-            updateTaskStatus();
+            updateTaskStatus(divId);
         }
 
         function removeTask(divId) {
             document.getElementById(divId).remove();
             --idCount;
-            updateTaskStatus();
+            updateTaskStatus(divId);
         }
 
-        function updateTaskStatus() {
-            if(idCount > 0)
-                document.getElementById('taskStatus').innerHTML = "Task : "+ completedTask + "/" + idCount;
-            else
+        function updateTaskStatus(args) {
+            if(args == null) {
+                document.getElementById('taskStatus').innerHTML = "Task : "+ completedTask.length  + "/" + idCount;
+            } else {
+                console.log(args);      
+                console.log(completedTask.length);
+
+                if(completedTask.includes(args)) {
+                    const index = completedTask.indexOf(args);
+                    completedTask.splice(index, 1);
+                } else {
+                    completedTask[completedTask.length] = args;
+                }
+
+                document.getElementById('taskStatus').innerHTML = "Task : "+ completedTask.length  + "/" + idCount;
+               
+                    
+            }
+
+            if(idCount == 0) {
                 document.getElementById('taskStatus').innerHTML = "";
+            }
+            
         }
 
     </script>
