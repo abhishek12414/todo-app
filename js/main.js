@@ -1,84 +1,150 @@
+let jsonData = {};
 
-let idCount = 0;
-let completedTask = new Array();
+if(localStorage.getItem('todo') != null) {
+    jsonData = JSON.parse(localStorage.getItem('todo'));
+    console.log(jsonData)
+    displayData();
+} else {
+    jsonData['element'] = [];
+}
 
-const todoSection = document.getElementById('section-todo-list');
+function storeData() {
+    localStorage.clear();
+    localStorage.setItem('todo', JSON.stringify(jsonData));
+}
 
 function addChild(key) {
     // console.log(idCount)
     if(event.key == 'Enter') {
-        
         //creating new root div
-        let newDiv = document.createElement('div');
-        newDiv.setAttribute("class", "item-list md-checkbox");
-        newDiv.setAttribute("id", `row${++idCount}`);
-        newDiv.setAttribute("draggable", 'true');
-        newDiv.setAttribute("onmousedown", 'dragItems()');
-
-        newDiv.innerHTML = `
-            <div> <input type="checkbox" id="checkbox${idCount}" onclick="changeState('row${idCount}')"><label for="checkbox${idCount}">${key.value}</label></div> 
-            <div class="item-move" onclick="removeTask('row${idCount}')"> <i class="icon-close">&times;</i></div> 
-        `;
-
-        todoSection.appendChild(newDiv);                
-        updateTaskStatus();
-        document.getElementById(key.id).value = "";
+        if(key.value != "") {
+            createJson(key.value);
+            document.getElementById(key.id).value = "";
+        }
     }
-}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+}     
+
+
+function createJson(value){
+
+    let element = {
+        'id': jsonData['element'].length,
+        'text': value, 
+        'isChecked': 0
+    };
+    jsonData['element'].push(element);
+    displayData();
+}
+
+
+function displayData() {
+    storeData();
+    
+    let todoSection = document.getElementById('section-todo-list');
+    todoSection.innerHTML = "";
+
+    let completedTask = 0;
+    
+    for(let i=0; i<jsonData['element'].length; i++) {
+        // console.log(textObject);
+        jsonData['element'][i]['id'] = i;
+        // console.log('alksjdflkj'+jsonData['element'])
+        let id = jsonData['element'][i]['id'];
+        let text = jsonData['element'][i]['text'];
+        let checkedStatus = jsonData['element'][i]['isChecked'];
+
+        let newDiv = document.createElement('div');
+            newDiv.setAttribute("class", "item-list md-checkbox");
+            newDiv.setAttribute("id", `row${id}`);
+            newDiv.setAttribute("draggable", 'true');
+            newDiv.setAttribute("onmousedown", 'dragItems()');
+
+            newDiv.innerHTML = `
+                <div> 
+                    <input type="checkbox" id="checkbox${id}" onchange="changeState('row${id}')" ${(checkedStatus)?"checked":""}>
+                    <label for="checkbox${id}" id="label${id}">${text}</label>
+                </div> 
+                <div class="item-move" onclick="removeTask('label${id}')">
+                    <i class="icon-close">&times;</i>
+                </div> 
+            `;
+
+            todoSection.appendChild(newDiv);
+            if(`${checkedStatus}` == 1)
+                completedTask++;
+
+            updateTextDecoration(`label${id}`, `${checkedStatus}`)
+            // console.log("in display : " + `${checkedStatus}`)
+            // updateTaskStatus();
+            // document.getElementById(id).value = "";
+    }
+
+    if(jsonData['element'].length == 0)
+        document.getElementById('taskStatus').innerHTML = "";
+    else
+        document.getElementById('taskStatus').innerHTML = "Task : "+ completedTask  + "/" + jsonData['element'].length;   
+
+}
+
+function updateTextDecoration(labelId, checkedStatus) {
+    // console.log(labelId + " status " + checkedStatus)
+    if(checkedStatus == 1) {
+        document.getElementById(labelId).style.textDecoration = 'line-through';
+    } else {
+        document.getElementById(labelId).style.textDecoration = 'none';
+    }
+}
 
 function changeState(divId) {
-    
-    const div = document.getElementById(`${divId}`);            
-    const checkedStatus = div.getElementsByTagName('input')[0].checked;
-
-    if(checkedStatus) {
-        div.getElementsByTagName('label')[0].style.textDecoration = 'line-through';
-    } else {
-        div.getElementsByTagName('label')[0].style.textDecoration = 'none';
-    }
-    updateTaskStatus(divId);
+    const changeId = parseInt(divId.charAt(divId.length-1));
+    const newArray = jsonData['element'].concat();
+    newArray[changeId].isChecked = (newArray[changeId].isChecked == 0) ? 1 : 0    
+    displayData();
 }
 
 function removeTask(divId) {
-    if(!completedTask.includes(divId)) {
+    const removeId = parseInt(divId.charAt(divId.length-1));
+    // console.log("remove id : "+removeId)
+
+    const newArray = jsonData['element'].concat();
+    
+    const checkedState = jsonData['element'][removeId]['isChecked'];
+
+
+    if(checkedState == 0) {
         if(window.confirm("Task yet not be completed.\nAre you sure want to delete")) {
             removeDiv(divId);
         }
     } else {
         removeDiv(divId);
-    }
-    
+    }    
 }
 
 function removeDiv(divId) {
-    document.getElementById(divId).remove();
-    --idCount;
-    // updateTaskStatus(divId);
-    if(completedTask.includes(divId)) {
-        const index = completedTask.indexOf(divId);
-        completedTask.splice(index, 1);
-    }
-    if(idCount == 0)
-        document.getElementById('taskStatus').innerHTML = "";
-    else 
-        document.getElementById('taskStatus').innerHTML = "Task : "+ completedTask.length  + "/" + idCount;
+    const removeId = parseInt(divId.charAt(divId.length-1));
+
+    const newArray = jsonData['element'].concat();
+
+    const temparrright = newArray.splice(removeId+1, newArray.length);
+    const temparrleft = newArray.splice(0, removeId);
+    
+    jsonData['element'] = temparrleft.concat(temparrright);
+
+    displayData();
 }
 
-function updateTaskStatus(args) {
-    if(args == null) {
-        document.getElementById('taskStatus').innerHTML = "Task : "+ completedTask.length  + "/" + idCount;
-    } else {
-        if(completedTask.includes(args)) {
-            const index = completedTask.indexOf(args);
-            completedTask.splice(index, 1);
-            console.log("after splice : " + completedTask);
-        } else {
-            completedTask[completedTask.length] = args;
-        }
 
-        document.getElementById('taskStatus').innerHTML = "Task : "+ completedTask.length  + "/" + idCount;
-    }
-}
+
+
+
+
+
+
+
+
+
+
+
 
 
 // drag item
@@ -133,6 +199,7 @@ function handleDrop(e) {
         var dropHTML = e.dataTransfer.getData('text/html');
         this.insertAdjacentHTML('beforebegin',dropHTML);
         var dropElem = this.previousSibling;
+        // var dropElem = this.parentNode;
         addDnDHandlers(dropElem);
         
     }
@@ -148,6 +215,7 @@ function handleDragEnd(e) {
         col.classList.remove('over');
     });*/
     updateCheckMark();
+    createJson();
 }
 
 let divElem;
@@ -164,6 +232,7 @@ function addDnDHandlers(elem) {
 
 function dragItems() {
     var cols = document.querySelectorAll('#section-todo-list .item-list');
+    // `console.log`(cols);
     [].forEach.call(cols, addDnDHandlers);
 }
 
@@ -174,23 +243,7 @@ function updateCheckMark() {
         // let divelem;
         let checkboxID = divElem.getElementsByTagName('div')[0].getElementsByTagName('input')[0].id;
         document.getElementById(checkboxID).checked = true;  
-    }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-
-    console.log(JSON.stringify(completedTask));
-    // localStorage.setItem('items', JSON.stringify(completedTask));
-    // const data = JSON.parse(localStorage.getItem('items'));
+    }
 }
 
-function createJson(){
-    console.log(todoSection);
-    
-    var taskArray = {};
 
-$("input[class=email]").each(function() {
-  var id = $(this).attr("title");
-  var email = $(this).val();
-
-  //how to create JSON?
-
-});
-}
