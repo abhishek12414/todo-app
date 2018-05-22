@@ -81,6 +81,10 @@ function updateTaskStatus(args) {
 }
 
 
+
+
+
+
 // drag item
 
 let dragItem = null;
@@ -165,32 +169,4 @@ function addDnDHandlers(elem) {
 function dragItems() {
     var cols = document.querySelectorAll('#section-todo-list .item-list');
     [].forEach.call(cols, addDnDHandlers);
-}
-
-function updateCheckMark() {
-    const rowId = divElem.id;
-    if(completedTask.includes(rowId)) {
-        // console.log(completedTask)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
-        // let divelem;
-        let checkboxID = divElem.getElementsByTagName('div')[0].getElementsByTagName('input')[0].id;
-        document.getElementById(checkboxID).checked = true;  
-    }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-
-    console.log(JSON.stringify(completedTask));
-    // localStorage.setItem('items', JSON.stringify(completedTask));
-    // const data = JSON.parse(localStorage.getItem('items'));
-}
-
-function createJson(){
-    console.log(todoSection);
-    
-    var taskArray = {};
-
-$("input[class=email]").each(function() {
-  var id = $(this).attr("title");
-  var email = $(this).val();
-
-  //how to create JSON?
-
-});
 }
