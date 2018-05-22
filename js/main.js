@@ -2,7 +2,6 @@ let jsonData = {};
 
 if(localStorage.getItem('todo') != null) {
     jsonData = JSON.parse(localStorage.getItem('todo'));
-    console.log(jsonData)
     displayData();
 } else {
     jsonData['element'] = [];
@@ -58,6 +57,10 @@ function displayData() {
             newDiv.setAttribute("id", `row${id}`);
             newDiv.setAttribute("draggable", 'true');
             newDiv.setAttribute("onmousedown", 'dragItems()');
+
+            // newDiv.setAttribute('ondrop','drop(event)');
+            // newDiv.setAttribute('ondragover','allowDrop(event)');
+            // newDiv.setAttribute("ondragstart", "drag(event)")
 
             newDiv.innerHTML = `
                 <div> 
@@ -133,7 +136,24 @@ function removeDiv(divId) {
     displayData();
 }
 
+function changePriority() {
 
+    // console.log('start : ' + dragSrcId)
+    // console.log('drop : ' + dragDropId)
+
+    const fromIndex = parseInt(dragSrcId.charAt(dragSrcId.length-1));
+    const toIndex = parseInt(dragDropId.charAt(dragDropId.length-1));
+
+    let arr = jsonData['element'].concat();
+    const length = arr.length;
+
+    var element = arr[fromIndex];
+    arr.splice(fromIndex, 1);
+    arr.splice(toIndex, 0, element);
+    jsonData['element'] = arr;
+
+    displayData();
+}
 
 
 
@@ -152,26 +172,26 @@ function removeDiv(divId) {
 let dragItem = null;
 var dragSrcEl = null;
 
+let dragSrcId, dragDropId;
+
 function handleDragStart(e) {
     // Target (this) element is the source node.
     dragSrcEl = this;
 
-    e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/html', this.outerHTML);
+    dragSrcId = this.id;
 
-    this.classList.add('dragElem');
-
+    // e.dataTransfer.effectAllowed = 'move';
+    // e.dataTransfer.setData('text/html', this.outerHTML);
+    // this.classList.add('dragElem');
 }
 
 function handleDragOver(e) {
     if (e.preventDefault) {
         e.preventDefault(); // Necessary. Allows us to drop.
     }
-    this.classList.add('over');
-
-    e.dataTransfer.dropEffect = 'move';  // See the section on the DataTransfer object.
-
-    return false;
+    // this.classList.add('over');
+    // e.dataTransfer.dropEffect = 'move';  // See the section on the DataTransfer object.
+    // return false;
 }
 
 function handleDragEnter(e) {
@@ -195,12 +215,18 @@ function handleDrop(e) {
         //alert(this.outerHTML);
         //dragSrcEl.innerHTML = this.innerHTML;
         //this.innerHTML = e.dataTransfer.getData('text/html');
-        this.parentNode.removeChild(dragSrcEl);
-        var dropHTML = e.dataTransfer.getData('text/html');
-        this.insertAdjacentHTML('beforebegin',dropHTML);
-        var dropElem = this.previousSibling;
-        // var dropElem = this.parentNode;
-        addDnDHandlers(dropElem);
+
+        
+        dragDropId = this.id;
+        
+        changePriority();
+
+        // this.parentNode.removeChild(dragSrcEl);
+        // var dropHTML = e.dataTransfer.getData('text/html');
+        // this.insertAdjacentHTML('beforebegin',dropHTML);
+        // var dropElem = this.previousSibling;
+        // // var dropElem = this.parentNode;
+        // addDnDHandlers(dropElem);
         
     }
     this.classList.remove('over');
@@ -210,15 +236,11 @@ function handleDrop(e) {
 function handleDragEnd(e) {
     // this/e.target is the source node.
     this.classList.remove('over');
-
     /*[].forEach.call(cols, function (col) {
         col.classList.remove('over');
     });*/
-    updateCheckMark();
-    createJson();
-}
 
-let divElem;
+}
 
 function addDnDHandlers(elem) {
     elem.addEventListener('dragstart', handleDragStart, false);
@@ -227,7 +249,6 @@ function addDnDHandlers(elem) {
     elem.addEventListener('dragleave', handleDragLeave, false);
     elem.addEventListener('drop', handleDrop, false);
     elem.addEventListener('dragend', handleDragEnd, false);
-    divElem = elem;
 }
 
 function dragItems() {
@@ -236,14 +257,30 @@ function dragItems() {
     [].forEach.call(cols, addDnDHandlers);
 }
 
-function updateCheckMark() {
-    const rowId = divElem.id;
-    if(completedTask.includes(rowId)) {
-        // console.log(completedTask)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
-        // let divelem;
-        let checkboxID = divElem.getElementsByTagName('div')[0].getElementsByTagName('input')[0].id;
-        document.getElementById(checkboxID).checked = true;  
-    }
-}
 
+// let allowDropDivId;
 
+// function allowDrop(ev) {
+//     ev.preventDefault();
+//     console.log("allow drop : " + ev.path[1]['id']);
+//     allowDropDivId = ev.path[1]['id'];
+// }
+
+// let dragDivId;
+
+// function drag(ev) {
+//     // console.log(ev.path);
+//     console.log("drag id : ????? "+ev.path[1]['id']);
+//     dragDivId = ev.path[1]['id'];
+//     // ev.dataTransfer.setData("text", ev.target.id);
+// }
+
+// let dropDivId;
+
+// function drop(ev) {
+//     ev.preventDefault();
+//     console.log("drop id : " + ev.path[1]['id']);
+//     dropDivId = ev.path[1]['id'];
+//     // var data = ev.dataTransfer.getData("text");
+//     // ev.target.appendChild(document.getElementById(data));
+// }
