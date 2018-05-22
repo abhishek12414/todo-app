@@ -133,3 +133,95 @@
     font-weight: bold;
     cursor: pointer;
 }
+
+#res {
+	margin: 100px;
+}
+
+.operations {
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	/* display: inline-grid; */
+	grid-template-columns: repeat(3, 1fr);
+	grid-gap: 8px;
+	position: fixed;
+	bottom: 0;
+	right: -90%;
+}
+
+.operations div {
+	margin: 5px;
+	padding: 0;
+	width: 100%;
+	height: 100%;
+	border: none;
+}
+
+.todo-button {
+	width: 10em;
+	height: auto;
+	transition-duration: 0.4s;
+	font-size: 1.2em;
+	border: none;
+	cursor: pointer;
+}
+
+.todo-button :hover {
+	background-color: #fff;
+}
+
+.button-primary {
+	background-color: #fff;
+	border: 2px solid  #008CBA;
+	color: #008CBA;
+}
+
+.button-primary:hover {
+	background-color: #008CBA;
+	color: #fff;
+}
+
+.button-secondary {
+	background-color: #fff;
+	border: 2px solid  #4CAF50;
+	color: #4CAF50;
+}
+
+.button-secondary:hover {
+	background-color: #4CAF50;
+	color: #fff;
+}
+
+.button-danger {
+	background-color: #fff;
+	border: 2px solid  #f44336;
+	color: #f44336;
+}
+
+.button-danger:hover {
+	background-color: #f44336;
+	color: #fff;
+}
+
+/* fa icon design */
+
+.fa-icon {
+	font-size: 2em;
+}
+
+.fa-icon:hover {
+	font-size: 2.8em;
+}
+
+.fa-trash {
+	color: #f44336;
+}
+
+.fa-check-square-o {
+	color: #008CBA;
+}
+
+.fa-square-o {
+	color: #4CAF50;
+}

@@ -1,10 +1,13 @@
 let jsonData = {};
 
-if(localStorage.getItem('todo') != null) {
-    jsonData = JSON.parse(localStorage.getItem('todo'));
-    displayData();
-} else {
+if(localStorage.getItem('todo') == null) {
+    console.log('called else')
     jsonData['element'] = [];
+} else {    
+    console.log('called if')
+    jsonData = JSON.parse(localStorage.getItem('todo'));
+    if(jsonData != null)
+        displayData();
 }
 
 function storeData() {
@@ -23,9 +26,8 @@ function addChild(key) {
     }
 }     
 
-
 function createJson(value){
-
+    
     let element = {
         'id': jsonData['element'].length,
         'text': value, 
@@ -37,10 +39,18 @@ function createJson(value){
 
 
 function displayData() {
-    storeData();
-    
+    if(jsonData != null)
+        storeData();
+
     let todoSection = document.getElementById('section-todo-list');
     todoSection.innerHTML = "";
+
+    if(jsonData == null) {
+        document.getElementById('taskStatus').innerHTML = "";
+        return;
+    }
+
+    
 
     let completedTask = 0;
     
@@ -156,6 +166,27 @@ function changePriority() {
 }
 
 
+// clear all records
+function clearRecord() {
+    jsonData['element'] = [];
+    localStorage.clear();
+    displayData();
+}
+
+function markAll() {
+    for(let i=0; i<jsonData['element'].length; i++) {
+        jsonData['element'][i]['isChecked'] = 1;
+    }
+    displayData();
+}
+
+
+function unMarkAll() {
+    for(let i=0; i<jsonData['element'].length; i++) {
+        jsonData['element'][i]['isChecked'] = 0;
+    }
+    displayData();
+}
 
 
 
@@ -164,10 +195,7 @@ function changePriority() {
 
 
 
-
-
-
-// drag item
+// drag operations
 
 let dragItem = null;
 var dragSrcEl = null;
@@ -177,9 +205,7 @@ let dragSrcId, dragDropId;
 function handleDragStart(e) {
     // Target (this) element is the source node.
     dragSrcEl = this;
-
     dragSrcId = this.id;
-
     // e.dataTransfer.effectAllowed = 'move';
     // e.dataTransfer.setData('text/html', this.outerHTML);
     // this.classList.add('dragElem');
@@ -215,12 +241,8 @@ function handleDrop(e) {
         //alert(this.outerHTML);
         //dragSrcEl.innerHTML = this.innerHTML;
         //this.innerHTML = e.dataTransfer.getData('text/html');
-
-        
         dragDropId = this.id;
-        
         changePriority();
-
         // this.parentNode.removeChild(dragSrcEl);
         // var dropHTML = e.dataTransfer.getData('text/html');
         // this.insertAdjacentHTML('beforebegin',dropHTML);
@@ -256,31 +278,3 @@ function dragItems() {
     // `console.log`(cols);
     [].forEach.call(cols, addDnDHandlers);
 }
-
-
-// let allowDropDivId;
-
-// function allowDrop(ev) {
-//     ev.preventDefault();
-//     console.log("allow drop : " + ev.path[1]['id']);
-//     allowDropDivId = ev.path[1]['id'];
-// }
-
-// let dragDivId;
-
-// function drag(ev) {
-//     // console.log(ev.path);
-//     console.log("drag id : ????? "+ev.path[1]['id']);
-//     dragDivId = ev.path[1]['id'];
-//     // ev.dataTransfer.setData("text", ev.target.id);
-// }
-
-// let dropDivId;
-
-// function drop(ev) {
-//     ev.preventDefault();
-//     console.log("drop id : " + ev.path[1]['id']);
-//     dropDivId = ev.path[1]['id'];
-//     // var data = ev.dataTransfer.getData("text");
-//     // ev.target.appendChild(document.getElementById(data));
-// }
