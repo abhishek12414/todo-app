@@ -137,7 +137,10 @@
 #res {
 	margin: 100px;
 }
+#section-taskStatus {
+	margin-bottom: 100px;
 
+}
 .operations {
 	width: 100%;
 	margin: 0;
