@@ -111,7 +111,7 @@ function updateTextDecoration(labelId, checkedStatus) {
 function changeState(divId) {
     const changeId = parseInt(divId.charAt(divId.length-1));
     const newArray = jsonData['element'].concat();
-    newArray[changeId].isChecked = (newArray[changeId].isChecked == 0) ? 1 : 0    
+    newArray[changeId].isChecked = (newArray[changeId].isChecked == 0) ? 1 : 0  
     displayData();
 }
 
@@ -174,9 +174,9 @@ function clearRecord() {
 }
 
 function markAll() {
-    for(let i=0; i<jsonData['element'].length; i++) {
+    for(let i=0; i<jsonData['element'].length; i++)
         jsonData['element'][i]['isChecked'] = 1;
-    }
+    
     displayData();
 }
 
