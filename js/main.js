@@ -1,10 +1,8 @@
 let jsonData = {};
 
 if(localStorage.getItem('todo') == null) {
-    console.log('called else')
     jsonData['element'] = [];
-} else {    
-    console.log('called if')
+} else {
     jsonData = JSON.parse(localStorage.getItem('todo'));
     if(jsonData != null)
         displayData();
@@ -15,16 +13,14 @@ function storeData() {
     localStorage.setItem('todo', JSON.stringify(jsonData));
 }
 
-function addChild(key) {
-    // console.log(idCount)
-    if(event.key == 'Enter') {
-        //creating new root div
-        if(key.value != "") {
-            createJson(key.value);
-            document.getElementById(key.id).value = "";
+$('#inputRecord').keypress(function(e) {
+    if(e.which == 13) {
+        if($(this).val() != "") {
+            createJson($(this).val());
+            $(this).val("");
         }
-    }
-}     
+    } 
+});
 
 function createJson(value){
     
@@ -33,46 +29,37 @@ function createJson(value){
         'text': value, 
         'isChecked': 0
     };
+    
     jsonData['element'].push(element);
     displayData();
 }
-
 
 function displayData() {
     if(jsonData != null)
         storeData();
 
-    let todoSection = document.getElementById('section-todo-list');
-    todoSection.innerHTML = "";
-
+    $('#section-todo-list').text("");
+    console.log($('#section-todo-list')[0])
     if(jsonData == null) {
-        document.getElementById('taskStatus').innerHTML = "";
+        $('#taskStatus').text("");
         return;
     }
-
     
-
     let completedTask = 0;
-    
+
     for(let i=0; i<jsonData['element'].length; i++) {
-        // console.log(textObject);
         jsonData['element'][i]['id'] = i;
-        // console.log('alksjdflkj'+jsonData['element'])
         let id = jsonData['element'][i]['id'];
         let text = jsonData['element'][i]['text'];
         let checkedStatus = jsonData['element'][i]['isChecked'];
 
-        let newDiv = document.createElement('div');
-            newDiv.setAttribute("class", "item-list md-checkbox");
-            newDiv.setAttribute("id", `row${id}`);
-            newDiv.setAttribute("draggable", 'true');
-            newDiv.setAttribute("onmousedown", 'dragItems()');
+        var childDiv = $('<div></div>');
+            $(childDiv).attr("class", "item-list md-checkbox");
+            $(childDiv).attr("id", `row${id}`);
+            $(childDiv).attr("draggable", 'true');
+            $(childDiv).attr("onmousedown", 'dragItems()');
 
-            // newDiv.setAttribute('ondrop','drop(event)');
-            // newDiv.setAttribute('ondragover','allowDrop(event)');
-            // newDiv.setAttribute("ondragstart", "drag(event)")
-
-            newDiv.innerHTML = `
+            var childContent = `
                 <div> 
                     <input type="checkbox" id="checkbox${id}" onchange="changeState('row${id}')" ${(checkedStatus)?"checked":""}>
                     <label for="checkbox${id}" id="label${id}">${text}</label>
@@ -81,30 +68,29 @@ function displayData() {
                     <i class="icon-close">&times;</i>
                 </div> 
             `;
+            
+            $(childDiv).append(childContent);
 
-            todoSection.appendChild(newDiv);
+            $('#section-todo-list').append(childDiv);
+
             if(`${checkedStatus}` == 1)
                 completedTask++;
 
             updateTextDecoration(`label${id}`, `${checkedStatus}`)
-            // console.log("in display : " + `${checkedStatus}`)
-            // updateTaskStatus();
-            // document.getElementById(id).value = "";
     }
 
     if(jsonData['element'].length == 0)
-        document.getElementById('taskStatus').innerHTML = "";
+        $('#taskStatus').text("");
     else
-        document.getElementById('taskStatus').innerHTML = "Task : "+ completedTask  + "/" + jsonData['element'].length;   
-
+        $('#taskStatus').text("Task : "+ completedTask  + "/" + jsonData['element'].length);   
 }
 
 function updateTextDecoration(labelId, checkedStatus) {
-    // console.log(labelId + " status " + checkedStatus)
     if(checkedStatus == 1) {
-        document.getElementById(labelId).style.textDecoration = 'line-through';
+        $('#' + labelId).css('textDecoration', 'line-through');
+        $('#' + labelId).css('color', '#b99393');
     } else {
-        document.getElementById(labelId).style.textDecoration = 'none';
+        $('#' + labelId).css('textDecoration', 'none');
     }
 }
 
@@ -117,17 +103,12 @@ function changeState(divId) {
 
 function removeTask(divId) {
     const removeId = parseInt(divId.charAt(divId.length-1));
-    // console.log("remove id : "+removeId)
-
     const newArray = jsonData['element'].concat();
-    
     const checkedState = jsonData['element'][removeId]['isChecked'];
 
-
     if(checkedState == 0) {
-        if(window.confirm("Task yet not be completed.\nAre you sure want to delete")) {
-            removeDiv(divId);
-        }
+        if(window.confirm("Task yet not be completed.\nAre you sure want to delete"))
+            removeDiv(divId);        
     } else {
         removeDiv(divId);
     }    
@@ -135,28 +116,22 @@ function removeTask(divId) {
 
 function removeDiv(divId) {
     const removeId = parseInt(divId.charAt(divId.length-1));
-
     const newArray = jsonData['element'].concat();
 
     const temparrright = newArray.splice(removeId+1, newArray.length);
     const temparrleft = newArray.splice(0, removeId);
     
     jsonData['element'] = temparrleft.concat(temparrright);
-
     displayData();
 }
 
 function changePriority() {
-
-    // console.log('start : ' + dragSrcId)
-    // console.log('drop : ' + dragDropId)
-
     const fromIndex = parseInt(dragSrcId.charAt(dragSrcId.length-1));
     const toIndex = parseInt(dragDropId.charAt(dragDropId.length-1));
 
     let arr = jsonData['element'].concat();
+    
     const length = arr.length;
-
     var element = arr[fromIndex];
     arr.splice(fromIndex, 1);
     arr.splice(toIndex, 0, element);
@@ -164,7 +139,6 @@ function changePriority() {
 
     displayData();
 }
-
 
 // clear all records
 function clearRecord() {
@@ -180,19 +154,12 @@ function markAll() {
     displayData();
 }
 
-
 function unMarkAll() {
     for(let i=0; i<jsonData['element'].length; i++) {
         jsonData['element'][i]['isChecked'] = 0;
     }
     displayData();
 }
-
-
-
-
-
-
 
 
 // drag operations
@@ -206,26 +173,19 @@ function handleDragStart(e) {
     // Target (this) element is the source node.
     dragSrcEl = this;
     dragSrcId = this.id;
-    // e.dataTransfer.effectAllowed = 'move';
-    // e.dataTransfer.setData('text/html', this.outerHTML);
-    // this.classList.add('dragElem');
 }
 
 function handleDragOver(e) {
-    if (e.preventDefault) {
+    if (e.preventDefault)
         e.preventDefault(); // Necessary. Allows us to drop.
-    }
-    // this.classList.add('over');
-    // e.dataTransfer.dropEffect = 'move';  // See the section on the DataTransfer object.
-    // return false;
 }
 
 function handleDragEnter(e) {
-// this / e.target is the current hover target.
+    // this / e.target is the current hover target.
 }
 
 function handleDragLeave(e) {
-    this.classList.remove('over');  // this / e.target is previous target element.
+    // this / e.target is previous target element.
 }
 
 function handleDrop(e) {
@@ -238,19 +198,10 @@ function handleDrop(e) {
     // Don't do anything if dropping the same column we're dragging.
     if (dragSrcEl != this) {
         // Set the source column's HTML to the HTML of the column we dropped on.
-        //alert(this.outerHTML);
-        //dragSrcEl.innerHTML = this.innerHTML;
-        //this.innerHTML = e.dataTransfer.getData('text/html');
         dragDropId = this.id;
-        changePriority();
-        // this.parentNode.removeChild(dragSrcEl);
-        // var dropHTML = e.dataTransfer.getData('text/html');
-        // this.insertAdjacentHTML('beforebegin',dropHTML);
-        // var dropElem = this.previousSibling;
-        // // var dropElem = this.parentNode;
-        // addDnDHandlers(dropElem);
-        
+        changePriority();        
     }
+
     this.classList.remove('over');
     return false;
 }
@@ -258,10 +209,6 @@ function handleDrop(e) {
 function handleDragEnd(e) {
     // this/e.target is the source node.
     this.classList.remove('over');
-    /*[].forEach.call(cols, function (col) {
-        col.classList.remove('over');
-    });*/
-
 }
 
 function addDnDHandlers(elem) {
@@ -274,7 +221,6 @@ function addDnDHandlers(elem) {
 }
 
 function dragItems() {
-    var cols = document.querySelectorAll('#section-todo-list .item-list');
-    // `console.log`(cols);
+    var cols = $('#section-todo-list .item-list');
     [].forEach.call(cols, addDnDHandlers);
 }
