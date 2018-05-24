@@ -1,4 +1,7 @@
 let jsonData = {};
+let jsonLength = 0;
+let completedTask = 0;
+
 
 if(localStorage.getItem('todo') == null) {
     jsonData['element'] = [];
@@ -35,17 +38,17 @@ function createJson(value){
 }
 
 function displayData() {
+    jsonLength = jsonData['element'].length;
+    completedTask = 0;
     if(jsonData != null)
         storeData();
 
     $('#section-todo-list').text("");
-    console.log($('#section-todo-list')[0])
     if(jsonData == null) {
         $('#taskStatus').text("");
         return;
     }
     
-    let completedTask = 0;
 
     for(let i=0; i<jsonData['element'].length; i++) {
         jsonData['element'][i]['id'] = i;
@@ -60,9 +63,9 @@ function displayData() {
             $(childDiv).attr("onmousedown", 'dragItems()');
 
             var childContent = `
-                <div> 
-                    <input type="checkbox" id="checkbox${id}" onchange="changeState('row${id}')" ${(checkedStatus)?"checked":""}>
-                    <label for="checkbox${id}" id="label${id}">${text}</label>
+                <div>
+                    <input type="checkbox" id="checkbox${id}" onchange="changeState('row${id}')" ${(checkedStatus)?"checked":""}/>
+                    <label id="label${id}" class="editOnClick">${text}</label>
                 </div> 
                 <div class="item-move" onclick="removeTask('label${id}')">
                     <i class="icon-close">&times;</i>
@@ -83,6 +86,14 @@ function displayData() {
         $('#taskStatus').text("");
     else
         $('#taskStatus').text("Task : "+ completedTask  + "/" + jsonData['element'].length);   
+
+    if(completedTask === jsonLength) {
+        $('#markStatus').removeClass('fa-check-square-o');
+        $('#markStatus').addClass('fa-square-o');
+    } else {
+        $('#markStatus').addClass('fa-check-square-o');
+        $('#markStatus').removeClass('fa-square-o');
+    }
 }
 
 function updateTextDecoration(labelId, checkedStatus) {
@@ -148,21 +159,81 @@ function clearRecord() {
 }
 
 function markAll() {
+    if(jsonLength == completedTask)
+        updateMark(0)
+    else
+        updateMark(1)
+    // for(let i=0; i<jsonData['element'].length; i++) {
+    //     jsonData['element'][i]['isChecked'] = 1;
+    // }
+}
+
+function updateMark(value) {
     for(let i=0; i<jsonData['element'].length; i++) {
-        jsonData['element'][i]['isChecked'] = 1;
+        jsonData['element'][i]['isChecked'] = value;
     }
     displayData();
 }
 
-function unMarkAll() {
-    for(let i=0; i<jsonData['element'].length; i++) {
-        jsonData['element'][i]['isChecked'] = 0;
-    }
-    displayData();
-}
+//todo edit
+
+$(document).ready(function() {
+    $('.editOnClick').click(function() {
+        let labelId = this.id;
+        let value = "";
+        let $text = $(this);
+        $input = $('<input type="text" />')
+        .css({
+            background: 'none',
+            border: '0px',
+            borderBottom: '1px solid #fff', 
+            outline: 'none'
+        });
+
+      $text.hide()
+        .after($input);
+  
+      $input.val($text.html()).show().focus()
+        .keypress(function(e) {
+          var key = e.which
+          if (key == 13) // enter key
+          {
+            $input.hide();
+            $text.html($input.val())
+              .show();
+            value = $input.val()
+            return false;
+          }
+        })
+        .focusout(function() {
+          $input.hide();
+          $text.show();
+          let labelIndex = labelId.slice(labelId.length-1);
+          jsonData['element'][labelIndex]['text'] = value;
+          storeData();
+        })
+    });
+  });
 
 
-// drag operations
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+  // drag operations
 
 let dragItem = null;
 var dragSrcEl = null;
