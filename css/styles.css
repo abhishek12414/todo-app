@@ -1,3 +1,9 @@
+body {
+	background-color: #34ADFF;
+  	background-image: -webkit-linear-gradient(150deg, #34ADFF 35%, #4CBFFF 35%);
+  /* min-height: 400px; */
+}
+
 label {
 	line-break: auto;
 	word-break: break-all;
@@ -23,8 +29,10 @@ label {
 }
 
 .section-add {
+	margin: auto;
     margin-top: 30px;
-    width: 100%;
+	width: 80%;
+	
 }
 
 .section-add input {
@@ -36,13 +44,19 @@ label {
     border-bottom: 2px;
     padding: 10px;
     text-align: center;
-    border-bottom-color: #948D8D;
+    border-bottom-color: #33b3bd;
     border-bottom-style: solid;
-    word-wrap: break-word;
+	word-wrap: break-word;
+	background: none;
 }
 
 .section-add input:focus {
-    background-color: #E9E4E4;
+	color: rgba(6, 43, 77, 0.527);
+	border-bottom: 2px solid #E9E4E4;
+	opacity: 3;
+	outline: none;	
+	text-shadow: 0 0 3px rgb(28, 134, 107);
+	transition: 2s;
 }
 
 #section-todo-list {
@@ -130,11 +144,11 @@ label {
 }
 
 .item-list:nth-child(odd) {
-    background-color: #B1B5C8;
+    background-color: rgba(177, 199, 200, 0.582);
 }
 
 .item-list:nth-child(even) {
-    background-color: #ACC9DA;
+    background-color: rgba(172, 218, 216, 0.568);
 }
 
 .icon-close {
@@ -153,9 +167,18 @@ label {
 }
 
 .operations {
-	display: flex;																																																																																																																																																																																																																																																																																																																																																																													
+	display: grid;
+	margin-top: 20px;
+    grid-template-columns: 8fr 1fr;
+    padding-left: 20px;
+	font-size: 20px;
+	background-color: rgba(51, 117, 133, 0.089);																																																																																																																																																																																																																																																																																																																																																															
 }
 
+.operations:hover {
+	background-color: rgba(54, 136, 184, 0.459);
+	transition: 2s;
+}
 
 .todo-button {
 	width: 10em;
