@@ -1,3 +1,8 @@
+label {
+	line-break: auto;
+	word-break: break-all;
+}
+
 .title {
     font-family: 'Arizonia', cursive;
     text-align: center;
@@ -40,9 +45,13 @@
     background-color: #E9E4E4;
 }
 
+#section-todo-list {
+	height: 300px;
+	overflow: auto;
+}
 
 /* material design checkbox */
-.md-checkbox {
+/* .md-checkbox {
 	position: relative;
 	margin: 16px 0;
 	text-align: left;
@@ -103,12 +112,12 @@
 
 .md-checkbox input[type="checkbox"]:disabled:checked + label:before {
 	background: rgba(0, 0, 0, 0.26);
-}
+} 
 
 *, *:before, *:after {
 	box-sizing: border-box;
 }
-
+*/
 .item-list {
     display: grid;
     grid-template-columns: 8fr 1fr;
@@ -137,29 +146,16 @@
 #res {
 	margin: 100px;
 }
+
 #section-taskStatus {
 	margin-bottom: 100px;
 
 }
+
 .operations {
-	width: 100%;
-	margin: 0;
-	padding: 0;
-	/* display: inline-grid; */
-	grid-template-columns: repeat(3, 1fr);
-	grid-gap: 8px;
-	position: fixed;
-	bottom: 0;
-	right: -90%;
+	display: flex;																																																																																																																																																																																																																																																																																																																																																																													
 }
 
-.operations div {
-	margin: 5px;
-	padding: 0;
-	width: 100%;
-	height: 100%;
-	border: none;
-}
 
 .todo-button {
 	width: 10em;
@@ -213,9 +209,9 @@
 	font-size: 2em;
 }
 
-.fa-icon:hover {
+/* .fa-icon:hover {
 	font-size: 2.8em;
-}
+} */
 
 .fa-trash {
 	color: #f44336;
