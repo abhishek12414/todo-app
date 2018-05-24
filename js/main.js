@@ -44,9 +44,14 @@ function displayData() {
         storeData();
 
     $('#section-todo-list').text("");
-    if(jsonData == null) {
+    if(jsonData == null || jsonData['element'].length == 0) {
         $('#taskStatus').text("");
+        $('.fa-trash').hide();
+        $('.operations').hide();
         return;
+    } else {
+        $('.fa-trash').show();
+        $('.operations').show();
     }
     
 
@@ -63,9 +68,9 @@ function displayData() {
             $(childDiv).attr("onmousedown", 'dragItems()');
 
             var childContent = `
-                <div>
+                <div class="todo-item">
                     <input type="checkbox" id="checkbox${id}" onchange="changeState('row${id}')" ${(checkedStatus)?"checked":""}/>
-                    <label id="label${id}" class="editOnClick">${text}</label>
+                    <label id="label${id}" class="labelTodo" contenteditable="true">${text}</label>
                 </div> 
                 <div class="item-move" onclick="removeTask('label${id}')">
                     <i class="icon-close">&times;</i>
@@ -82,26 +87,24 @@ function displayData() {
             updateTextDecoration(`label${id}`, `${checkedStatus}`)
     }
 
-    if(jsonData['element'].length == 0)
-        $('#taskStatus').text("");
-    else
-        $('#taskStatus').text("Task : "+ completedTask  + "/" + jsonData['element'].length);   
+    if(completedTask == jsonLength)
+        $('.operations input:checkbox').prop('checked', true);
 
-    if(completedTask === jsonLength) {
-        $('#markStatus').removeClass('fa-check-square-o');
-        $('#markStatus').addClass('fa-square-o');
-    } else {
-        $('#markStatus').addClass('fa-check-square-o');
-        $('#markStatus').removeClass('fa-square-o');
-    }
+    $('#taskStatus').text("Task : "+ completedTask  + "/" + jsonData['element'].length);   
 }
 
 function updateTextDecoration(labelId, checkedStatus) {
     if(checkedStatus == 1) {
-        $('#' + labelId).css('textDecoration', 'line-through');
-        $('#' + labelId).css('color', '#b99393');
+        $('#' + labelId).css({            
+            transition: '4s',
+            textDecoration: 'line-through',
+            color: '#b99393'
+        });
     } else {
-        $('#' + labelId).css('textDecoration', 'none');
+        $('#' + labelId).css({            
+            transition: '4s',
+            textDecoration: 'none'
+        });
     }
 }
 
@@ -153,20 +156,20 @@ function changePriority() {
 
 // clear all records
 function clearRecord() {
-    jsonData['element'] = [];
-    localStorage.clear();
-    displayData();
+    if(window.confirm('Are you sure want to delete all tasks?')) {
+        jsonData['element'] = [];
+        localStorage.clear();
+        displayData();
+    }
 }
 
-function markAll() {
-    if(jsonLength == completedTask)
-        updateMark(0)
-    else
+$('.operations input[type=checkbox]').change(function() {
+    var ischecked= $(this).is(':checked');
+    if(ischecked)
         updateMark(1)
-    // for(let i=0; i<jsonData['element'].length; i++) {
-    //     jsonData['element'][i]['isChecked'] = 1;
-    // }
-}
+    else
+        updateMark(0);
+});
 
 function updateMark(value) {
     for(let i=0; i<jsonData['element'].length; i++) {
@@ -176,66 +179,21 @@ function updateMark(value) {
 }
 
 //todo edit
-
-$(document).ready(function() {
-    $('.editOnClick').click(function() {
+$('.todo-item').on('keydown', '.labelTodo', function(e) {
+    if(e.key == 'Enter') {
         let labelId = this.id;
-        let value = "";
-        let $text = $(this);
-        $input = $('<input type="text" />')
-        .css({
-            background: 'none',
-            border: '0px',
-            borderBottom: '1px solid #fff', 
-            outline: 'none'
-        });
+        let labelIndex = labelId.slice(labelId.length-1);
+        let value = e.target.textContent;
+        jsonData['element'][labelIndex]['text'] = value;
+        displayData();
+    }
+});
 
-      $text.hide()
-        .after($input);
-  
-      $input.val($text.html()).show().focus()
-        .keypress(function(e) {
-          var key = e.which
-          if (key == 13) // enter key
-          {
-            $input.hide();
-            $text.html($input.val())
-              .show();
-            value = $input.val()
-            return false;
-          }
-        })
-        .focusout(function() {
-          $input.hide();
-          $text.show();
-          let labelIndex = labelId.slice(labelId.length-1);
-          jsonData['element'][labelIndex]['text'] = value;
-          storeData();
-        })
-    });
-  });
+$('.labelTodo').focus(function(){
+    $('#'+this.id).css('border-bottom', '3px solid #fff')
+})
 
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-  // drag operations
-
-let dragItem = null;
+// drag operations
 var dragSrcEl = null;
 
 let dragSrcId, dragDropId;
