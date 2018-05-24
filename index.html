@@ -29,28 +29,17 @@
             </div>
         </section>
 
+        <section class="operations">
+            <div> <i id="markStatus" class="fa fa-check-square-o fa-icon" aria-hidden="true" onclick="markAll()"></i></div>
+            <div> <i class="fa fa-trash fa-icon" aria-hidden="true" onclick="clearRecord()"></i> </div>            
+        </section>
+
         <section id="section-todo-list">
             
         </section>
 
         <section id="section-taskStatus">
-            <div>
-                <p id="taskStatus"></p>
-            </div>
-        </section>
-
-        <section>
-            <div class="operations">
-                <div>
-                    <i class="fa fa-trash fa-icon" aria-hidden="true" onclick="clearRecord()"></i>
-                </div>
-                <div>
-                    <i class="fa fa-check-square-o fa-icon" aria-hidden="true" onclick="markAll()"></i>
-                </div>
-                <div>
-                    <i class="fa fa-square-o fa-icon" aria-hidden="true" onclick="unMarkAll()"></i>
-                </div>
-            </div>
+            <p id="taskStatus"></p>
         </section>
 
     </body>
