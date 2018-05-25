@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TODO</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="author" content="Abhishek Kumar">
+        <!-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous"> -->
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link href="https://fonts.googleapis.com/css?family=Arizonia" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="css/styles.css">
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        
+    </head>
+    <body>
+        <header class="header-div">
+            <div class="title">
+                <h2>TODO</h2>
+                <p>A way to track your work list.</p>
+            </div>
+        </header>
+
+        <section class="section-add">
+            <div>
+                <input id="inputRecord" type="text" placeholder="Add your item">
+                <!-- <input id="inputRecord" type="text" placeholder="Add your item" onkeydown="addChild(this)"> -->
+            </div>
+        </section>
+
+        <section class="operations">
+            <input type="checkbox">
+        </section>
+
+        <section id="section-todo-list">
+            
+        </section>
+
+        <section id="section-taskStatus">
+            <p id="taskStatus"></p>
+            <i class="fa fa-trash fa-icon" aria-hidden="true" onclick="clearRecord()"></i>
+        </section>
+
+    </body>
+    <script type="text/javascript" src="js/main.js"></script>
+</html>
