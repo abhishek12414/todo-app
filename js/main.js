@@ -2,14 +2,14 @@ let jsonData = {};
 let jsonLength = 0;
 let completedTask = 0;
 
+// drag operations
+var dragSrcEl = null;
+let dragSrcId, dragDropId;
 
-if(localStorage.getItem('todo') == null) {
-    jsonData['element'] = [];
-} else {
-    jsonData = JSON.parse(localStorage.getItem('todo'));
-    if(jsonData != null)
-        displayData();
-}
+
+console.log('here')
+
+
 
 function storeData() {
     localStorage.clear();
@@ -54,7 +54,6 @@ function displayData() {
         $('.operations').show();
     }
     
-
     for(let i=0; i<jsonData['element'].length; i++) {
         jsonData['element'][i]['id'] = i;
         let id = jsonData['element'][i]['id'];
@@ -85,6 +84,7 @@ function displayData() {
                 completedTask++;
 
             updateTextDecoration(`label${id}`, `${checkedStatus}`)
+            sendReqToServer();
     }
 
     if(completedTask == jsonLength)
@@ -191,12 +191,7 @@ $('.todo-item').on('keydown', '.labelTodo', function(e) {
 
 $('.labelTodo').focus(function(){
     $('#'+this.id).css('border-bottom', '3px solid #fff')
-})
-
-// drag operations
-var dragSrcEl = null;
-
-let dragSrcId, dragDropId;
+});
 
 function handleDragStart(e) {
     // Target (this) element is the source node.
@@ -253,3 +248,44 @@ function dragItems() {
     var cols = $('#section-todo-list .item-list');
     [].forEach.call(cols, addDnDHandlers);
 }
+
+//run on load
+if(localStorage.getItem('todo') == null) {
+    jsonData['element'] = [];
+} else {
+    jsonData = JSON.parse(localStorage.getItem('todo'));
+    if(jsonData != null)
+        displayData();
+}
+
+// server connectivity
+function sendReqToServer() {
+    console.log('here')
+    $.ajax({
+        type: 'GET',
+        url: '/addtodo',
+        data: {id: '101'},
+        success: function(resultData) {
+            console.log(resultData);
+        }
+    });
+
+    console.log('called');
+}
+
+
+$(function(){
+
+    console.log('here')
+    $.ajax({
+        type: 'GET',
+        url: '/addtodo',
+        data: {id: '101'},
+        success: function(resultData) {
+            console.log(resultData);
+        }
+    });
+
+    console.log('called');
+
+})

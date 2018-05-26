@@ -2,18 +2,28 @@ let jsonData = {};
 let jsonLength = 0;
 let completedTask = 0;
 
-
-if(localStorage.getItem('todo') == null) {
-    jsonData['element'] = [];
-} else {
-    jsonData = JSON.parse(localStorage.getItem('todo'));
-    if(jsonData != null)
-        displayData();
-}
+// drag operations
+var dragSrcEl = null;
+let dragSrcId, dragDropId;
 
 function storeData() {
     localStorage.clear();
     localStorage.setItem('todo', JSON.stringify(jsonData));
+
+    // $(function(){
+        console.log(jsonData['element'])
+        $.ajax({
+            type: 'GET',
+            url: '/data',
+            crossDomain:true, 
+            dataType: "json",
+            data:  {data: jsonData['element']},
+            success: function(resultData) {
+                console.log(resultData);
+            }
+        });
+    // });
+
 }
 
 $('#inputRecord').keypress(function(e) {
@@ -54,7 +64,6 @@ function displayData() {
         $('.operations').show();
     }
     
-
     for(let i=0; i<jsonData['element'].length; i++) {
         jsonData['element'][i]['id'] = i;
         let id = jsonData['element'][i]['id'];
@@ -191,12 +200,7 @@ $('.todo-item').on('keydown', '.labelTodo', function(e) {
 
 $('.labelTodo').focus(function(){
     $('#'+this.id).css('border-bottom', '3px solid #fff')
-})
-
-// drag operations
-var dragSrcEl = null;
-
-let dragSrcId, dragDropId;
+});
 
 function handleDragStart(e) {
     // Target (this) element is the source node.
@@ -252,4 +256,13 @@ function addDnDHandlers(elem) {
 function dragItems() {
     var cols = $('#section-todo-list .item-list');
     [].forEach.call(cols, addDnDHandlers);
+}
+
+//run on load
+if(localStorage.getItem('todo') == null) {
+    jsonData['element'] = [];
+} else {
+    jsonData = JSON.parse(localStorage.getItem('todo'));
+    if(jsonData != null)
+        displayData();
 }
