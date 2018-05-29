@@ -44,6 +44,7 @@ app.get("/data", function(req, response){
 
     let data = req.query.data;
 
+    console.log(typeof(data))
     if(data == null) {
         // console.log(getAllTODOs())
         // return getAllTODOs()
