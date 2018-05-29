@@ -8,10 +8,19 @@ const bodyParser = require('body-parser');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.static("public"));
 
 //connect to database
-mongoose.connect('mongodb://localhost/todos');
+mongoose.connect('mongodb://localhost/todoapp');
 let db = mongoose.connection;
+
+const TODOSchema = mongoose.Schema({
+    id: Number,
+    text: String,
+    isChecked: Number
+});
+
+const TODO = mongoose.model('TODO', TODOSchema);
 
 //check connection
 db.once('open', function() {
@@ -20,26 +29,114 @@ db.once('open', function() {
     console.log('Error while connecting');
 });
 
-// const fs = require('fs');
-
 //create a server object
 const hostname = '127.0.0.1';
 const port = 3001;
 
-// const server = http.createServer((req, res) => {
-//     res.statusCode = 200;
-//     res.setHeader('Content-Type', 'text/html');
-//     const myReadStream = fs.createReadStream(__dirname + '/../index.html', 'utf8')
-//     myReadStream.pipe(res)
-// });
 
-app.use(express.static("public"));
-
-app.get("/data", function(req, res){
-    // console.log(req.query['data']);
-    insertData(req.query.data);
-    res.send(req.query);
+app.get("/clear", function(req, response){
+    db.collection('todos').drop();
+    response.send('deleted')
 });
+
+
+app.get("/data", function(req, response){
+
+    let data = req.query.data;
+
+    if(data == null) {
+        // console.log(getAllTODOs())
+        // return getAllTODOs()
+
+        // promise.then((res)=> {
+        //     response.send(res);
+        // });
+
+        TODO.find({}, (err, allTODOs)=>{
+            if(err) {
+                reject(err);
+            } else {
+                response.send(allTODOs)
+            }
+        });
+
+    } else {
+        //for drop collection and insert new collection
+        db.collection('todos').drop();
+        
+        TODO.insertMany(data, (err, res)=>{
+            if(err)
+                console.log('err');
+            else {
+                // return getAllTODOs();
+                // promise.then((res)=> {
+                //     response.send(res);
+                // });
+                
+                TODO.find({}, (err, allTODOs)=>{
+                    if(err) {
+                        reject(err);
+                    } else {
+                        response.send(allTODOs)
+                    }
+                });
+            }
+        });    
+    }            
+});
+
+// function getAllTODOs() {
+//     // get all the collection
+//     let result;
+//     TODO.find({}, (err, allTODOs)=>{
+//         if(err) {
+//             console.log(err);
+//             return "asdfasdf";
+//         } else {
+//             result = allTODOs;
+//             // console.log(allTODOs)
+//             console.log("-------")
+//             return allTODOs;
+//         }
+//     });
+
+// }
+
+
+//to fetch data from the database
+let promise = new Promise( function(resolve, reject) {
+    TODO.find({}, (err, allTODOs)=>{
+        if(err) {
+            // console.log(err);
+            // return;
+            reject(err);
+        } else {
+            // result = allTODOs;
+            // console.log(allTODOs)
+            // return allTODOs;
+            // console.log(allTODOs)
+            resolve(allTODOs)
+        }
+    });
+});
+
+
+// getAllTODOs = () => {
+//     promise.then((res)=> {
+//         console.log(res);
+//     });
+
+//     // TODO.find({}, (err, allTODOs)=>{
+//     //     if(err) {
+//     //         console.log(err);
+//     //         return;
+//     //     } else {
+//     //         // result = allTODOs;
+//     //         // console.log(allTODOs)
+//     //         return allTODOs;
+//     //     }
+//     // });
+// }
 
 // reload(app);
 
@@ -47,19 +144,10 @@ app.listen(port, hostname, () => {
     console.log(`servre is running at http://${hostname}:${port}`);
 });
 
-function insertData(data) {
-    //Drop the collection
-    // mongoose.connection.collections.drop(function() {
-    //     done();
-    // });
-    console.log(data)
-    let x = {name : "a", age:34};
-    
-    db.collection('todos').drop();
-    db.collection("todos").insert(data, function(err, res){
-        if(err)
-            console.log(err);        
-    });
-    
-    console.log(db.collection('todos').find({}));
-}
+
+// const server = http.createServer((req, res) => {
+//     res.statusCode = 200;
+//     res.setHeader('Content-Type', 'text/html');
+//     const myReadStream = fs.createReadStream(__dirname + '/../index.html', 'utf8')
+//     myReadStream.pipe(res)
+// });
