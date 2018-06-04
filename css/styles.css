@@ -40,7 +40,6 @@
     background-color: #E9E4E4;
 }
 
-
 /* material design checkbox */
 .md-checkbox {
 	position: relative;
@@ -132,4 +131,8 @@
     font-size: 25px;
     font-weight: bold;
     cursor: pointer;
+}
+
+.item-list .over {
+  border-top: 2px solid blue;
 }
