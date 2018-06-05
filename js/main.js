@@ -1,10 +1,8 @@
 let jsonData = {};
 
 if(localStorage.getItem('todo') == null) {
-    console.log('called else')
     jsonData['element'] = [];
-} else {    
-    console.log('called if')
+} else {
     jsonData = JSON.parse(localStorage.getItem('todo'));
     if(jsonData != null)
         displayData();
@@ -16,7 +14,6 @@ function storeData() {
 }
 
 function addChild(key) {
-    // console.log(idCount)
     if(event.key == 'Enter') {
         //creating new root div
         if(key.value != "") {
@@ -37,66 +34,60 @@ function createJson(value){
     displayData();
 }
 
-
 function displayData() {
+    jsonLength = jsonData['element'].length;
+    completedTask = 0;
     if(jsonData != null)
         storeData();
 
-    let todoSection = document.getElementById('section-todo-list');
-    todoSection.innerHTML = "";
-
-    if(jsonData == null) {
-        document.getElementById('taskStatus').innerHTML = "";
+    $('#section-todo-list').text("");
+    if(jsonData == null || jsonData['element'].length == 0) {
+        $('#taskStatus').text("");
+        $('.fa-trash').hide();
+        $('.operations').hide();
         return;
+    } else {
+        $('.fa-trash').show();
+        $('.operations').show();
     }
-
     
 
-    let completedTask = 0;
-    
     for(let i=0; i<jsonData['element'].length; i++) {
-        // console.log(textObject);
         jsonData['element'][i]['id'] = i;
-        // console.log('alksjdflkj'+jsonData['element'])
         let id = jsonData['element'][i]['id'];
         let text = jsonData['element'][i]['text'];
         let checkedStatus = jsonData['element'][i]['isChecked'];
 
-        let newDiv = document.createElement('div');
-            newDiv.setAttribute("class", "item-list md-checkbox");
-            newDiv.setAttribute("id", `row${id}`);
-            newDiv.setAttribute("draggable", 'true');
-            newDiv.setAttribute("onmousedown", 'dragItems()');
+        var childDiv = $('<div></div>');
+            $(childDiv).attr("class", "item-list md-checkbox");
+            $(childDiv).attr("id", `row${id}`);
+            $(childDiv).attr("draggable", 'true');
+            $(childDiv).attr("onmousedown", 'dragItems()');
 
-            // newDiv.setAttribute('ondrop','drop(event)');
-            // newDiv.setAttribute('ondragover','allowDrop(event)');
-            // newDiv.setAttribute("ondragstart", "drag(event)")
-
-            newDiv.innerHTML = `
-                <div> 
-                    <input type="checkbox" id="checkbox${id}" onchange="changeState('row${id}')" ${(checkedStatus)?"checked":""}>
-                    <label for="checkbox${id}" id="label${id}">${text}</label>
+            var childContent = `
+                <div class="todo-item">
+                    <input type="checkbox" id="checkbox${id}" onchange="changeState('row${id}')" ${(checkedStatus)?"checked":""}/>
+                    <label id="label${id}" class="labelTodo" contenteditable="true">${text}</label>
                 </div> 
                 <div class="item-move" onclick="removeTask('label${id}')">
                     <i class="icon-close">&times;</i>
                 </div> 
             `;
+            
+            $(childDiv).append(childContent);
 
-            todoSection.appendChild(newDiv);
+            $('#section-todo-list').append(childDiv);
+
             if(`${checkedStatus}` == 1)
                 completedTask++;
 
             updateTextDecoration(`label${id}`, `${checkedStatus}`)
-            // console.log("in display : " + `${checkedStatus}`)
-            // updateTaskStatus();
-            // document.getElementById(id).value = "";
     }
 
-    if(jsonData['element'].length == 0)
-        document.getElementById('taskStatus').innerHTML = "";
-    else
-        document.getElementById('taskStatus').innerHTML = "Task : "+ completedTask  + "/" + jsonData['element'].length;   
+    if(completedTask == jsonLength)
+        $('.operations input:checkbox').prop('checked', true);
 
+    $('#taskStatus').text("Task : "+ completedTask  + "/" + jsonData['element'].length);   
 }
 
 function updateTextDecoration(labelId, checkedStatus) {
@@ -173,27 +164,29 @@ function clearRecord() {
     displayData();
 }
 
-function markAll() {
-    for(let i=0; i<jsonData['element'].length; i++)
-        jsonData['element'][i]['isChecked'] = 1;
-    
-    displayData();
+//
+//
+//
+//
+//
+//update the code here
+
+
+function updateStatus(e) {
+    console.log(this.target);
+    var ischecked= $(this).is(':checked');
+    if(ischecked)
+        updateMark(1)
+    else
+        updateMark(0);
 }
 
-
-function unMarkAll() {
+function updateMark(value) {
     for(let i=0; i<jsonData['element'].length; i++) {
-        jsonData['element'][i]['isChecked'] = 0;
+        jsonData['element'][i]['isChecked'] = value;
     }
     displayData();
 }
-
-
-
-
-
-
-
 
 // drag operations
 
