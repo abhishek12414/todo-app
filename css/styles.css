@@ -29,8 +29,9 @@ label {
 }
 
 .section-add {
+	margin: auto;
     margin-top: 30px;
-    width: 100%;
+	width: 80%;
 }
 
 .section-add input {
@@ -42,13 +43,19 @@ label {
     border-bottom: 2px;
     padding: 10px;
     text-align: center;
-    border-bottom-color: #948D8D;
+    border-bottom-color: #33b3bd;
     border-bottom-style: solid;
-    word-wrap: break-word;
+	word-wrap: break-word;
+	background: none;
 }
 
 .section-add input:focus {
-    background-color: #E9E4E4;
+	color: rgba(6, 43, 77, 0.527);
+	border-bottom: 2px solid #E9E4E4;
+	opacity: 3;
+	outline: none;	
+	text-shadow: 0 0 3px rgb(28, 134, 107);
+	transition: 2s;
 }
 
 /* material design checkbox */
