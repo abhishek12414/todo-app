@@ -38,7 +38,6 @@ function createJson(value) {
         'text': value,
         'isChecked': 0
     };
-
     jsonData['element'].push(element);
     storeData();
 }
