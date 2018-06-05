@@ -1,3 +1,14 @@
+body {
+	background-color: #34ADFF;
+  	background-image: -webkit-linear-gradient(150deg, #34ADFF 35%, #4CBFFF 35%);
+  /* min-height: 400px; */
+}
+
+label {
+	line-break: auto;
+	word-break: break-all;
+}
+
 .title {
     font-family: 'Arizonia', cursive;
     text-align: center;
