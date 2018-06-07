@@ -1,5 +1,4 @@
-let jsonData = {};
-let jsonLength = 0;
+let jsonData = [];
 let completedTask = 0;
 
 // drag operations
@@ -8,45 +7,35 @@ let dragSrcId, dragDropId;
 
 function storeData() {
     $.ajax({
-        type: 'GET',
-        url: '/data',
+        type: 'POST',
+        url: '/api',
         crossDomain: true,
-        data: { data: jsonData['element'] },
+        data: {data: JSON.stringify(jsonData)},
         success: function (resultData) {
-            jsonData['element'] = resultData;
-            jsonLength = jsonData['element'].length
+            jsonData = resultData;
             displayData();
         }
     });
 }
 
-// add a new todo task
-$('#inputRecord').keypress(function (e) {
-    if (e.which == 13) {
-        if ($(this).val() != "") {
-            createJson($(this).val());
-            $(this).val("");
-        }
-    }
-});
-
 // create json object with value
 function createJson(value) {
-
     let element = {
-        'id': jsonLength,
+        'id': jsonData.length,
         'text': value,
         'isChecked': 0
     };
-    jsonData['element'].push(element);
+    jsonData.push(element);
     storeData();
 }
 
 function displayData() {
     completedTask = 0;
+    let i = 0;
+
     $('#section-todo-list').text("");
 
-    if (jsonData['element'].length === 0) {
+    if (jsonData.length === 0) {
         $('#taskStatus').text("");
         $('.fa-trash, .operations').hide();
         return;
@@ -54,8 +43,8 @@ function displayData() {
         $('.fa-trash, .operations').show();
     }
 
-    jsonData['element'].forEach((todos)=>{
-        let id = todos.id;
+    jsonData.forEach((todos)=>{
+        let id = i++;
         let text = todos.text;
         let checkedStatus = todos.isChecked;
 
@@ -84,12 +73,8 @@ function displayData() {
         updateTextDecoration(`label${id}`, `${checkedStatus}`);
     });
 
-    if (completedTask == jsonLength)
-        $('.operations input:checkbox').prop('checked', true);
-    else
-        $('.operations input:checkbox').prop('checked', false);
-
-    $('#taskStatus').text("Task : " + completedTask + "/" + jsonLength);
+    $('.operations input:checkbox').prop('checked', (completedTask == jsonData.length) ? true : false);
+    $('#taskStatus').text("Task : " + completedTask + "/" + jsonData.length);
 }
 
 function updateTextDecoration(labelId, checkedStatus) {
@@ -109,17 +94,17 @@ function updateTextDecoration(labelId, checkedStatus) {
 
 function changeCheckedState(divId) {
     const changeId = parseInt(divId.charAt(divId.length - 1));
-    const newArray = jsonData['element'].concat();
+    const newArray = jsonData.concat();
     newArray[changeId].isChecked = (newArray[changeId].isChecked == 0) ? 1 : 0
     storeData();
 }
 
 function removeTask(divId) {
-    const removeId = parseInt(divId.charAt(divId.length - 1));
-    const newArray = jsonData['element'].concat();
-    const checkedState = jsonData['element'][removeId]['isChecked'];
+    const removeId = parseInt(divId.substring('label'.length));
+    const newArray = jsonData.concat();
+    const checkedState = $(`#checkbox${removeId}`).is(':checked');
 
-    if (checkedState == 0) {
+    if (!checkedState) {
         if (window.confirm("Task yet not be completed.\nAre you sure want to delete"))
             removeDiv(divId);
     } else {
@@ -128,13 +113,14 @@ function removeTask(divId) {
 }
 
 function removeDiv(divId) {
-    const removeId = parseInt(divId.charAt(divId.length - 1));
-    const newArray = jsonData['element'].concat();
+
+    const removeId = parseInt(divId.substring('label'.length));
+    const newArray = jsonData.concat();
 
     const temparrright = newArray.splice(removeId + 1, newArray.length);
     const temparrleft = newArray.splice(0, removeId);
 
-    jsonData['element'] = temparrleft.concat(temparrright);
+    jsonData = temparrleft.concat(temparrright);
     storeData();
 }
 
@@ -142,13 +128,13 @@ function changePriority() {
     const fromIndex = parseInt(dragSrcId.slice(3, dragSrcId.length));
     const toIndex = parseInt(dragDropId.slice(3, dragSrcId.length));
 
-    let arr = jsonData['element'].concat();
+    let arr = jsonData.concat();
 
     const length = arr.length;
     let element = arr[fromIndex];
     arr.splice(fromIndex, 1);
     arr.splice(toIndex, 0, element);
-    jsonData['element'] = arr;
+    jsonData = arr;
 
     storeData();
 }
@@ -156,51 +142,25 @@ function changePriority() {
 // clear all records
 function clearRecord() {
     if (window.confirm('Are you sure want to delete all tasks?')) {
-        jsonData['element'] = [];
+        jsonData = [];
 
         $.ajax({
-            type: 'GET',
-            url: '/clear',
+            type: 'DELETE',
+            url: '/api',
             crossDomain: true,
-            // dataType: "json",
-            data: { data: jsonData['element'] },
             success: function (resultData) {
                 displayData();
             }
         });
     }
-}
-
-$('.operations input[type=checkbox]').change(function() {
-    let ischecked= $(this).is(':checked');
-    if(ischecked)
-        updateMark(1)
-    else
-        updateMark(0);
-});
+}   
 
 function updateMark(value) {
-    for (let i = 0; i < jsonData['element'].length; i++) {
-        jsonData['element'][i]['isChecked'] = value;
+    for (let i = 0; i < jsonData.length; i++) {
+        jsonData[i]['isChecked'] = value;
     }
     storeData();
 }
-
-//todo edit
-$('#section-todo-list').on('keydown', '.todo-item .labelTodo', function (e) {
-    if (e.key == 'Enter') {
-        let labelId = this.id;
-        let labelIndex = labelId.slice(labelId.length - 1);
-        let value = e.target.textContent;
-        jsonData['element'][labelIndex]['text'] = value;
-        storeData();
-    }
-});
-
-// Custom css on focus while adding a todo item
-$('.labelTodo').focus(function () {
-    $('#' + this.id).css('border-bottom', '3px solid #fff')
-});
 
 // Drag drop operation
 function handleDragStart(e) {
@@ -250,8 +210,52 @@ function dragItems() {
     [].forEach.call(cols, addDnDHandlers);
 }
 
+
+// add a new todo task
+$('#inputRecord').keypress(function (e) {
+    if (e.which == 13) {
+        if ($(this).val() != "") {
+            createJson($(this).val());
+            $(this).val("");
+        }
+    }
+});
+
+$('.operations input[type=checkbox]').change(function() {
+    let ischecked= $(this).is(':checked');
+    if(ischecked)
+        updateMark(1)
+    else
+        updateMark(0);
+});
+
+//todo edit
+$('#section-todo-list').on('keydown', '.todo-item .labelTodo', function (e) {
+    if (e.key == 'Enter') {
+        let labelId = this.id;
+        let labelIndex = labelId.slice(labelId.length - 1);
+        let value = e.target.textContent;
+        jsonData[labelIndex]['text'] = value;
+        storeData();
+    }
+});
+
+// Custom css on focus while adding a todo item
+$('.labelTodo').focus(function () {
+    $('#' + this.id).css('border-bottom', '3px solid #fff')
+});
+
 //on body load
 $(function () {
-    jsonData['element'] = [];
-    storeData();
+    $.ajax({
+        type: 'GET',
+        url: '/api',
+        crossDomain: true,
+        success: function (resultData) {
+            if(resultData){
+                jsonData =resultData;
+                displayData();
+            }
+        }
+    });
 });

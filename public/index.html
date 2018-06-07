@@ -11,8 +11,8 @@
         <link rel="stylesheet" type="text/css" href="css/styles.css">
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-        
+        <script type="text/javascript" src="js/main.js"></script> 
+
     </head>
     <body>
         <header class="header-div">
@@ -23,10 +23,8 @@
         </header>
 
         <section class="section-add">
-            <div>
-                <input id="inputRecord" type="text" placeholder="Add your item">
-                <!-- <input id="inputRecord" type="text" placeholder="Add your item" onkeydown="addChild(this)"> -->
-            </div>
+            <input id="inputRecord" type="text" placeholder="Add your item">
+            <!-- <input id="inputRecord" type="text" placeholder="Add your item" onkeydown="addChild(this)"> -->
         </section>
 
         <section class="operations">
@@ -40,8 +38,6 @@
         <section id="section-taskStatus">
             <p id="taskStatus"></p>
             <i class="fa fa-trash fa-icon" aria-hidden="true" onclick="clearRecord()"></i>
-        </section>
-
-        <script type="text/javascript" src="js/main.js"></script>
+        </section> 
     </body>
 </html>
